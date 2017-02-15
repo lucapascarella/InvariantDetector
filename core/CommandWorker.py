@@ -159,6 +159,15 @@ class CommandWorker:
             return True
         return False
 
+    def runDaikonDynComp(self, classpath, outputDir, dtraceFile, daikonRegex, regressionTestName, savepath):
+        classpath = classpath + ":" + self.junit + ":" + self.hamcrest + ":" + self.daikon + ":" + self.evosuite
+        cmd = self.java + " -ea -cp " + classpath + " daikon.DynComp --output-dir=" + outputDir + " --decl-file=" + dtraceFile + ".dtrace.gz --ppt-select-pattern='" + daikonRegex + "' org.junit.runner.JUnitCore " + regressionTestName
+        (out, err) = self.runCommand(cmd)
+        self.saveCommand(savepath, "chicory", cmd, out, err)
+        if "Chicory warning: no records were printed" in out:
+            return False
+        return True
+
     def runDaikonChicory(self, classpath, outputDir, dtraceFile, daikonRegex, regressionTestName, savepath):
         classpath = classpath + ":" + self.junit + ":" + self.hamcrest + ":" + self.daikon + ":" + self.evosuite
         cmd = self.java + " -ea -cp " + classpath + " daikon.Chicory --output-dir=" + outputDir + " --dtrace-file=" + dtraceFile + ".dtrace.gz --ppt-select-pattern='" + daikonRegex + "' org.junit.runner.JUnitCore " + regressionTestName

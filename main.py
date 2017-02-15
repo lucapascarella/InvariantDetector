@@ -292,29 +292,33 @@ def executeDaikonDiff(cmd, compiledTestDir, compiledTestDirPrev, daikonOutputDir
 
 def executeDaikon(cmd, classpath, compiledTestDir, daikonOutputDir, dtraceFile, res, regex, testsuiteName):
     savepath = daikonOutputDir
-    if cmd.runDaikonChicory(classpath + ":" + compiledTestDir, daikonOutputDir, dtraceFile, regex, testsuiteName, savepath) is False:
+    if cmd.runDaikonDynComp(classpath + ":" + compiledTestDir, daikonOutputDir, dtraceFile, regex, testsuiteName, savepath) is False:
         res.updateDaikonChicory("false")
         print("LOG. Daikon Chicory error")
         return False
     else:
-        res.updateDaikonChicory("true")
-        print("LOG. Daikon Chicory success")
-        if cmd.runDaikonUncompress(daikonOutputDir, dtraceFile, savepath) is False:
-            res.updateDaikonUncompress("false")
-            print("LOG. Daikon Uncompress error")
-            return False
+        if cmd.runDaikonChicory(classpath + ":" + compiledTestDir, daikonOutputDir, dtraceFile, regex, testsuiteName, savepath) is False:
+            # TODO Add if statement here
+            print("TODO")
         else:
-            res.updateDaikonUncompress("true")
-            print("LOG. Daikon Uncompress success")
-            (rtn1, fempty1) = cmd.runDaikonPrintInvariants(daikonOutputDir, dtraceFile, savepath)
-            if rtn1 is False:
-                res.updateDaikonPrint("false")
-                print("LOG. Daikon Print error")
+            res.updateDaikonChicory("true")
+            print("LOG. Daikon Chicory success")
+            if cmd.runDaikonUncompress(daikonOutputDir, dtraceFile, savepath) is False:
+                res.updateDaikonUncompress("false")
+                print("LOG. Daikon Uncompress error")
                 return False
             else:
-                res.updateDaikonPrint("true")
-                print("LOG. Daikon Print success")
-                return True
+                res.updateDaikonUncompress("true")
+                print("LOG. Daikon Uncompress success")
+                (rtn1, fempty1) = cmd.runDaikonPrintInvariants(daikonOutputDir, dtraceFile, savepath)
+                if rtn1 is False:
+                    res.updateDaikonPrint("false")
+                    print("LOG. Daikon Print error")
+                    return False
+                else:
+                    res.updateDaikonPrint("true")
+                    print("LOG. Daikon Print success")
+                    return True
 
 
 def executeDaikonPrev(cmd, classpath, compiledTestDir, daikonOutputDir, dtraceFile, res, regex, testsuiteName):
